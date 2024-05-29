@@ -1,5 +1,5 @@
 "use client";
-
+import * as React from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
 import { Inter as FontSans } from "next/font/google";
 import { client } from "@/services/apollo";
@@ -11,7 +11,6 @@ import { WagmiProvider, createConfig, http } from "wagmi";
 import { mainnet, polygon, sepolia } from "wagmi/chains";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { ConnectKitProvider, getDefaultConfig } from "connectkit";
-import { AirstackProvider } from "@airstack/airstack-react";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -59,19 +58,18 @@ export default function RootLayout({
 
   return (
     <html lang="en">
-      <ApolloProvider client={client}>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="dark"
-          enableSystem
-          disableTransitionOnChange
-        >
-          <Script
-            src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GAID}`}
-            strategy="afterInteractive"
-          />
-          <Script id="google-analytics" strategy="afterInteractive">
-            {`
+      <ThemeProvider
+        attribute="class"
+        defaultTheme="dark"
+        enableSystem
+        disableTransitionOnChange
+      >
+        <Script
+          src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GAID}`}
+          strategy="afterInteractive"
+        />
+        <Script id="google-analytics" strategy="afterInteractive">
+          {`
               window.dataLayer = window.dataLayer || [];
               function gtag(){window.dataLayer.push(arguments);}
               gtag('js', new Date());
@@ -80,25 +78,20 @@ export default function RootLayout({
                 page_path: window.location.pathname,
               });
             `}
-          </Script>
-        </ThemeProvider>
-        <WagmiProvider config={config}>
-          <QueryClientProvider client={queryClient}>
-            <ConnectKitProvider>
-              <AirstackProvider
-                apiKey={process.env.NEXT_PUBLIC_AIRSTACK_API_KEY ?? ""}
-              >
-                <body
-                  className={cn("font-sans antialiased", fontSans.variable)}
-                >
-                  {/* <Navbar /> */}
-                  {children}
-                </body>
-              </AirstackProvider>
-            </ConnectKitProvider>
-          </QueryClientProvider>
-        </WagmiProvider>
-      </ApolloProvider>
+        </Script>
+      </ThemeProvider>
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <ConnectKitProvider>
+            <body
+              className={cn("font-sans antialiased", fontSans.variable)}
+            >
+              {/* <Navbar /> */}
+              {children}
+            </body>
+          </ConnectKitProvider>
+        </QueryClientProvider>
+      </WagmiProvider>
     </html>
   );
 }
