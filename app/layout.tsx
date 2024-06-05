@@ -1,16 +1,16 @@
 "use client";
-import * as React from 'react';
 import { ThemeProvider } from "@/components/theme-provider";
-import { Inter as FontSans } from "next/font/google";
-import { client } from "@/services/apollo";
-import { ApolloProvider } from "@apollo/client";
+import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import "./globals.css";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from "connectkit";
+import { Inter as FontSans } from "next/font/google";
 import Script from "next/script";
+import * as React from "react";
 import { WagmiProvider, createConfig, http } from "wagmi";
 import { mainnet, polygon, sepolia } from "wagmi/chains";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConnectKitProvider, getDefaultConfig } from "connectkit";
+import "./globals.css";
+import Link from "next/link";
 
 const fontSans = FontSans({
   subsets: ["latin"],
@@ -84,9 +84,30 @@ export default function RootLayout({
         <QueryClientProvider client={queryClient}>
           <ConnectKitProvider>
             <body
-              className={cn("font-sans antialiased", fontSans.variable)}
+              className={cn(
+                "font-sans antialiased bg-neutral-950",
+                fontSans.variable
+              )}
             >
               {/* <Navbar /> */}
+              <header className="text-white mt-20">
+                <div className="container flex justify-between items-center border-b pb-6">
+                  <nav className="flex items-center justify-center">
+                    <div className="space-x-10">
+                      <Link className="hover:text-zinc-700" href="/" >
+                        Home
+                      </Link>
+                      <Link className="hover:text-zinc-700" href="/about" >
+                        About
+                      </Link>
+                      <Link className="hover:text-zinc-700" href="/projects" >
+                        Projects
+                      </Link>
+                    </div>
+                  </nav>
+                  <ConnectKitButton />
+                </div>
+              </header>
               {children}
             </body>
           </ConnectKitProvider>

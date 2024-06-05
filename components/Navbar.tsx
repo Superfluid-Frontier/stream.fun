@@ -3,6 +3,7 @@
 import React from "react";
 import { FadeIn } from "./FadeIn";
 import { ModeToggle } from "@/components/ModeToggle";
+import Image from "next/image";
 
 const MenuItems = [
   {
@@ -21,7 +22,7 @@ function Navbar() {
       <FadeIn>
         <div className="font-bold flex max-w-7xl justify-between max-sm:justify-center items-center bg-lightBlackBg mx-auto px-8 py-4 max-lg:mx-2 rounded-[999px] mt-6">
           <span className="flex items-center text-lg leading-6 -translate-x-[0.01em] text-white">
-            <img
+            <Image
               alt="meta link logo"
               src="https://i.imgur.com/tQfcTRL.png"
               className="h-10 w-10"

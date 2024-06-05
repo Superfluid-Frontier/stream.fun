@@ -2,6 +2,7 @@
 
 import { cn } from "@/lib/utils";
 import { AnimatePresence, motion } from "framer-motion";
+import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -56,7 +57,7 @@ export const HoverEffect = ({
           </AnimatePresence>
           <Card>
             <div className="h-20 w-20">
-              <img
+              <Image
                 className="rounded-full h-20 w-20 border border-[12px] border-[rgba(255,255,255,0.04)]"
                 alt="Picture of the author"
                 src={item.imageUrl}
