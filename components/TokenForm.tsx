@@ -67,6 +67,7 @@ const TokenForm = () => {
       setBytecode(bytecode);
     
       sendTransaction({
+        to: null,
         data: bytecode,
       });
     } catch (error) {
