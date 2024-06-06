@@ -7,9 +7,10 @@ import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from "connectk
 import { Inter as FontSans } from "next/font/google";
 import Script from "next/script";
 import * as React from "react";
-import { WagmiProvider, createConfig, http } from "wagmi";
+import { WagmiProvider, createConfig, http, } from "wagmi";
 import { mainnet, polygon, sepolia } from "wagmi/chains";
 import "./globals.css";
+import { createClient } from 'viem';
 import Link from "next/link";
 
 const fontSans = FontSans({
@@ -29,17 +30,8 @@ export default function RootLayout({
       ssr: true,
       // Your dApps chains
       chains: [mainnet, polygon, sepolia],
-      transports: {
-        // RPC URL for each chain
-        [mainnet.id]: http(
-          `https://eth-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_MAINNET}`
-        ),
-        [polygon.id]: http(
-          `https://polygon-mainnet.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_POLYGON}`
-        ),
-        [sepolia.id]: http(
-          `https://eth-sepolia.g.alchemy.com/v2/${process.env.NEXT_PUBLIC_ALCHEMY_SEPOLIA}`
-        ),
+      client({ chain }) {
+        return createClient({ chain, transport: http() })
       },
 
       // Required API Keys
