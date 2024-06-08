@@ -39,7 +39,7 @@ export default function RootLayout({
         process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
 
       // Required App Info
-      appName: "MetaLinks",
+      appName: "stream.funs",
 
       // Optional App Info
       appDescription: "A great app",

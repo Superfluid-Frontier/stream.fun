@@ -12,7 +12,7 @@ export default function About() {
         <title>Stream Fun</title>
         <meta
           name="description"
-          content="Your Web3 Link-in-Bio Tool"
+          content="Your super token creation community"
           key="desc"
         />
         <link rel="icon" href="/favicon.ico" />
