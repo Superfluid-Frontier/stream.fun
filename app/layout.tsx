@@ -1,61 +1,45 @@
-"use client";
+import './global.css';
+
 import { ThemeProvider } from "@/components/theme-provider";
-import { Button } from "@/components/ui/button";
-import { cn } from "@/lib/utils";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { ConnectKitProvider, getDefaultConfig, ConnectKitButton } from "connectkit";
-import { Inter as FontSans } from "next/font/google";
+import GoogleAnalytics from '@/components/GoogleAnalytics/GoogleAnalytics';
+import OnchainProviders from '@/OnchainProviders';
+import { Inter as FontSans } from 'next/font/google';
+import { initAnalytics } from '@/utils/analytics';
+import { inter } from './fonts';
 import Script from "next/script";
-import * as React from "react";
-import { WagmiProvider, createConfig, http, } from "wagmi";
-import { mainnet, polygon, sepolia } from "wagmi/chains";
-import "./globals.css";
-import { createClient } from 'viem';
-import Link from "next/link";
+import { cn } from '@/lib/utils';
+import Link from 'next/link';
+import type { Metadata } from 'next';
+import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
 
 const fontSans = FontSans({
-  subsets: ["latin"],
-  variable: "--font-sans",
+  subsets: ['latin'],
+  variable: '--font-sans',
 });
 
-export default function RootLayout({
-  children,
-}: Readonly<{
-  children: React.ReactNode;
-}>) {
-  const queryClient = new QueryClient();
+export const viewport = {
+  width: 'device-width',
+  initialScale: 1.0,
+};
 
-  const config = createConfig(
-    getDefaultConfig({
-      ssr: true,
-      // Your dApps chains
-      chains: [mainnet, polygon, sepolia],
-      client({ chain }) {
-        return createClient({ chain, transport: http() })
-      },
+export const metadata: Metadata = {
+  manifest: '/manifest.json',
+  other: {
+    boat: '0.17.0',
+  },
+};
 
-      // Required API Keys
-      walletConnectProjectId:
-        process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || "",
+// Stat analytics before the App renders,
+// so we can track page views and early events
+initAnalytics();
 
-      // Required App Info
-      appName: "stream.funs",
-
-      // Optional App Info
-      appDescription: "A great app",
-      appUrl: "https://meta-links.vercel.app", // your app's url
-      appIcon: "https://family.co/logo.png", // your app's icon, no bigger than 1024x1024px (max. 1MB)
-    })
-  );
-
+/** Root layout to define the structure of every page
+ * https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
+ */
+export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en">
-      <ThemeProvider
-        attribute="class"
-        defaultTheme="dark"
-        enableSystem
-        disableTransitionOnChange
-      >
+    <html lang="en" className={`${inter.className}`}>
+      <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GAID}`}
           strategy="afterInteractive"
@@ -72,39 +56,31 @@ export default function RootLayout({
             `}
         </Script>
       </ThemeProvider>
-      <WagmiProvider config={config}>
-        <QueryClientProvider client={queryClient}>
-          <ConnectKitProvider>
-            <body
-              className={cn(
-                "font-sans antialiased bg-neutral-950",
-                fontSans.variable
-              )}
-            >
-              {/* <Navbar /> */}
-              <header className="text-white mt-20">
-                <div className="container flex justify-between items-center border-b pb-6">
-                  <nav className="flex items-center justify-center">
-                    <div className="space-x-10">
-                      <Link className="hover:text-zinc-700" href="/" >
-                        Home
-                      </Link>
-                      <Link className="hover:text-zinc-700" href="/about" >
-                        About
-                      </Link>
-                      <Link className="hover:text-zinc-700" href="/projects" >
-                        Projects
-                      </Link>
-                    </div>
-                  </nav>
-                  <ConnectKitButton />
+      <OnchainProviders>
+        <body className={cn('bg-neutral-950 font-sans antialiased', fontSans.variable)}>
+          {/* <Navbar /> */}
+          <header className="mt-20 text-white">
+            <div className="container flex items-center justify-between border-b pb-6">
+              <nav className="flex items-center justify-center">
+                <div className="space-x-10">
+                  <Link className="hover:text-zinc-700" href="/">
+                    Home
+                  </Link>
+                  <Link className="hover:text-zinc-700" href="/about">
+                    About
+                  </Link>
+                  <Link className="hover:text-zinc-700" href="/projects">
+                    Projects
+                  </Link>
                 </div>
-              </header>
-              {children}
-            </body>
-          </ConnectKitProvider>
-        </QueryClientProvider>
-      </WagmiProvider>
+              </nav>
+              {/* <ConnectKitButton /> */}
+            </div>
+          </header>
+          {children}
+        </body>
+      </OnchainProviders>
+      <GoogleAnalytics />
     </html>
   );
 }
