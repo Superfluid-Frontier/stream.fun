@@ -5,7 +5,6 @@ import GoogleAnalytics from '@/components/GoogleAnalytics/GoogleAnalytics';
 import OnchainProviders from '@/OnchainProviders';
 import { Inter as FontSans } from 'next/font/google';
 import { initAnalytics } from '@/utils/analytics';
-import { inter } from './fonts';
 import Script from "next/script";
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
@@ -16,11 +15,6 @@ const fontSans = FontSans({
   subsets: ['latin'],
   variable: '--font-sans',
 });
-
-export const viewport = {
-  width: 'device-width',
-  initialScale: 1.0,
-};
 
 export const metadata: Metadata = {
   manifest: '/manifest.json',
@@ -38,7 +32,7 @@ initAnalytics();
  */
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="en" className={`${inter.className}`}>
+    <html lang="en">
       <ThemeProvider attribute="class" defaultTheme="dark" enableSystem disableTransitionOnChange>
         <Script
           src={`https://www.googletagmanager.com/gtag/js?id=${process.env.NEXT_PUBLIC_GAID}`}
