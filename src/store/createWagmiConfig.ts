@@ -26,12 +26,11 @@ export function createWagmiConfig(rpcUrl: string, projectId?: string) {
       walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
 
       // Required App Info
-      appName: 'stream.funs',
+      appName: 'stream.fun',
 
       // Optional App Info
       appDescription: 'A great app',
-      appUrl: 'https://meta-links.vercel.app', // your app's url
-      appIcon: 'https://family.co/logo.png', // your app's icon, no bigger than 1024x1024px (max. 1MB)
+      appUrl: 'https://stream-fun.vercel.app', // your app's url
     }),
   );
   // return createConfig({

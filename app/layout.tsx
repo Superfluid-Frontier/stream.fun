@@ -1,15 +1,14 @@
 import './global.css';
 
-import { ThemeProvider } from "@/components/theme-provider";
-import GoogleAnalytics from '@/components/GoogleAnalytics/GoogleAnalytics';
 import OnchainProviders from '@/OnchainProviders';
-import { Inter as FontSans } from 'next/font/google';
-import { initAnalytics } from '@/utils/analytics';
-import Script from "next/script";
+import GoogleAnalytics from '@/components/GoogleAnalytics/GoogleAnalytics';
+import { ThemeProvider } from "@/components/theme-provider";
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { initAnalytics } from '@/utils/analytics';
 import type { Metadata } from 'next';
-import { ConnectKitProvider, getDefaultConfig } from 'connectkit';
+import { Inter as FontSans } from 'next/font/google';
+import Link from 'next/link';
+import Script from "next/script";
 
 const fontSans = FontSans({
   subsets: ['latin'],
