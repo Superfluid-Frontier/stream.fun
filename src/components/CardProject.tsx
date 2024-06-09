@@ -24,7 +24,7 @@ export function CardProject(props: CardProjectProps) {
         <div className="flex flex-row space-x-3">
           <div className="w-4/12">
             <Image
-              src={project.image}
+              src={project.logoURI}
               width={500}
               height={500}
               className="rounded-sm"
@@ -32,11 +32,14 @@ export function CardProject(props: CardProjectProps) {
             />
           </div>
           <div className="flex flex-col">
-            <div className="text-xs font-semibold">Created by {project.name}</div>
+            <div className="text-xs font-semibold">{project.name}</div>
             <div className="text-xs font-semibold text-green-500">
-              Market cap: {project.marketCap}
+              {/* Market cap: {project.marketCap} */}
+              {project.symbol}
             </div>
-            <div className="text-xs font-semibold">Replies: {project.marketCap}</div>
+            <div className="text-xs font-semibold">
+              Created At: {new Date(parseFloat(project.createdAtTimestamp) * 1000).toDateString()}
+            </div>
             <div className="flex flex-col space-y-1 text-xs">
               <div className="font-semibold">
                 {project.name} (ticker: {project.ticker}):{' '}

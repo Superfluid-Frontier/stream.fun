@@ -1,7 +1,9 @@
 export interface Project {
   id: string;
   name: string;
-  image: string;
+  symbol: string;
+  createdAtTimestamp: string;
+  logoURI: string;
   createdBy: string;
   replies: number;
   marketCap: string;
