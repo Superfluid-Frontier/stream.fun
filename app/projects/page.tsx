@@ -8,6 +8,7 @@ import { Plus, Search } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { useChainId } from 'wagmi';
+import { Spinner } from '@/components/ui/spinner'; // Assuming you have a Spinner component
 
 export async function fetchSuperfluidTokens(chainId: number) {
   const response = await fetch(`/api/subgraph?chainId=${chainId}`);
@@ -21,11 +22,20 @@ export default function Project() {
   const router = useRouter();
   const chainId = useChainId();
   const [projects, setProjects] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
 
   React.useEffect(() => {
-    fetchSuperfluidTokens(chainId).then((res) => {
-      setProjects(res.tokens);
-    });
+    setLoading(true);
+    fetchSuperfluidTokens(chainId)
+      .then((res) => {
+        setProjects(res.tokens);
+        setLoading(false);
+      })
+      .catch((err) => {
+        setError(err.message);
+        setLoading(false);
+      });
   }, [chainId]);
 
   const handleCreateProject = () => {
@@ -63,11 +73,19 @@ export default function Project() {
             </Button>
           </div>
         </div>
-        <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
-          {projects.map((project, index) => (
-            <CardProject key={index} project={project} clicked />
-          ))}
-        </div>
+        {loading ? (
+          <div className="flex justify-center items-center h-full">
+            <Spinner />
+          </div>
+        ) : error ? (
+          <div className="text-red-500 text-center">{error}</div>
+        ) : (
+          <div className="grid grid-cols-1 gap-2 md:grid-cols-3">
+            {projects.map((project, index) => (
+              <CardProject key={index} project={project} clicked />
+            ))}
+          </div>
+        )}
       </div>
     </>
   );

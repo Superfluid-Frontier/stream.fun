@@ -65,7 +65,12 @@ export async function GET(req: NextRequest) {
   const chainId = req.nextUrl.searchParams.get('chainId');
   const query = {
     query: `query getSuperfluidTokens {
-      tokens(where: {isListed: true, isSuperToken: true}, first: 25) {
+      tokens(
+        where: {isListed: true, isSuperToken: true}
+        first: 25
+        orderBy: createdAtTimestamp
+        orderDirection: desc
+      ) {
         superTokenAddress: id
         name
         symbol
@@ -113,7 +118,9 @@ export async function GET(req: NextRequest) {
   }
 
   const mergedTokens = data.data.tokens.map((token: any) => {
-    const matchingToken = tokenListData.find((t: any) => t.address.toLowerCase() === token.underlyingAddress.toLowerCase());
+    const matchingToken = tokenListData.find(
+      (t: any) => t.address.toLowerCase() === token.underlyingAddress.toLowerCase(),
+    );
     return {
       ...token,
       logoURI: matchingToken ? matchingToken.logoURI : '',
