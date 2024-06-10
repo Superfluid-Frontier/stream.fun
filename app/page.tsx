@@ -1,28 +1,20 @@
-"use client";
+import { generateMetadata } from '@/utils/generateMetadata';
+import HomePage from './home/HomePage';
 
-import * as React from 'react';
-import LandingPage from "@/components/LandingPage";
-import { BackgroundBeams } from "@/components/background-beams";
-import Link from 'next/link';
+export const metadata = generateMetadata({
+  title: 'Build Onchain Apps Template',
+  description:
+    'Save weeks of initial app setup and the hassle of integrating onchain components with web2 infrastructure.',
+  images: 'themes.png',
+  pathname: '',
+});
 
-export default function Home() {
-  return (
-    <>
-      <head>
-        <title>Stream Fun</title>
-        <meta
-          name="description"
-          content="Your super token creation community"
-          key="desc"
-        />
-        <link rel="icon" href="/favicon.ico" />
-      </head>
-      <div className="min-h-screen h-full w-full rounded-md  relative flex flex-col items-center justify-center antialiased">
-        <div className="p-4">
-          <LandingPage />
-        </div>
-      </div>
-
-    </>
-  );
+/**
+ * Server component, which imports the Home component (client component that has 'use client' in it)
+ * https://nextjs.org/docs/app/building-your-application/routing/pages-and-layouts
+ * https://nextjs.org/docs/pages/building-your-application/upgrading/app-router-migration#step-4-migrating-pages
+ * https://nextjs.org/docs/app/building-your-application/rendering/client-components
+ */
+export default function Page() {
+  return <HomePage />;
 }
