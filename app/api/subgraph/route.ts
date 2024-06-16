@@ -18,21 +18,21 @@ import {
 } from 'viem/chains';
 
 const subgraphMap: Record<number, string> = {
-  [mainnet.id]: 'https://eth-mainnet.subgraph.x.superfluid.dev/',
-  [base.id]: 'https://base-mainnet.subgraph.x.superfluid.dev/',
-  [polygon.id]: 'https://polygon-mainnet.subgraph.x.superfluid.dev/',
-  [optimism.id]: 'https://optimism-mainnet.subgraph.x.superfluid.dev/',
-  [arbitrum.id]: 'https://arbitrum-one.subgraph.x.superfluid.dev/',
-  [gnosis.id]: 'https://xdai-mainnet.subgraph.x.superfluid.dev/',
-  [avalanche.id]: 'https://avalanche-c.subgraph.x.superfluid.dev/',
-  [bsc.id]: 'https://bsc-mainnet.subgraph.x.superfluid.dev/',
-  [celo.id]: 'https://celo-mainnet.subgraph.x.superfluid.dev/',
-  [degen.id]: 'https://degenchain.subgraph.x.superfluid.dev/',
-  [scroll.id]: 'https://scroll-mainnet.subgraph.x.superfluid.dev/',
-  [scrollSepolia.id]: 'https://scroll-sepolia.subgraph.x.superfluid.dev/',
-  [avalancheFuji.id]: 'https://avalanche-fuji.subgraph.x.superfluid.dev/',
-  [sepolia.id]: 'https://eth-sepolia.subgraph.x.superfluid.dev/',
-  [optimismSepolia.id]: 'https://optimism-sepolia.subgraph.x.superfluid.dev/',
+  1: 'https://subgraph-endpoints.superfluid.dev/eth-mainnet/protocol-v1',
+  8453: 'https://subgraph-endpoints.superfluid.dev/base-mainnet/protocol-v1',
+  137: 'https://subgraph-endpoints.superfluid.dev/polygon-mainnet/protocol-v1',
+  10: 'https://subgraph-endpoints.superfluid.dev/optimism-mainnet/protocol-v1',
+  42161: 'https://subgraph-endpoints.superfluid.dev/arbitrum-one/protocol-v1',
+  100: 'https://subgraph-endpoints.superfluid.dev/xdai-mainnet/protocol-v1',
+  43114: 'https://subgraph-endpoints.superfluid.dev/avalanche-c/protocol-v1',
+  56: 'https://subgraph-endpoints.superfluid.dev/bsc-mainnet/protocol-v1',
+  42220: 'https://subgraph-endpoints.superfluid.dev/celo-mainnet/protocol-v1',
+  666666666: 'https://subgraph-endpoints.superfluid.dev/degenchain/protocol-v1',
+  534352: 'https://subgraph-endpoints.superfluid.dev/scroll-mainnet/protocol-v1',
+  534351: 'https://subgraph-endpoints.superfluid.dev/scroll-sepolia/protocol-v1',
+  43113: 'https://subgraph-endpoints.superfluid.dev/avalanche-fuji/protocol-v1',
+  11155111: 'https://subgraph-endpoints.superfluid.dev/eth-sepolia/protocol-v1',
+  11155420: 'https://subgraph-endpoints.superfluid.dev/optimism-sepolia/protocol-v1',
 };
 
 const tokenList: Record<number, string> = {
@@ -66,7 +66,7 @@ export async function GET(req: NextRequest) {
   const query = {
     query: `query getSuperfluidTokens {
       tokens(
-        where: {isListed: true, isSuperToken: true}
+        where: {isListed: false, isSuperToken: true}
         first: 25
         orderBy: createdAtTimestamp
         orderDirection: desc

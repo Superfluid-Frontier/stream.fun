@@ -4,8 +4,17 @@ import { useState, ChangeEvent, FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { HoverBorderGradient } from './hover-border-gradient';
-import { useAccount, useConnect, useDisconnect, useSendTransaction } from 'wagmi';
+import {
+  useAccount,
+  useChainId,
+  useConnect,
+  useDisconnect,
+  useSendTransaction,
+  useWriteContract,
+} from 'wagmi';
 import { ConnectKitButton } from 'connectkit';
+import PureSuperTokenDeployerABI from '@/abis/PureSuperTokenDeployer.json';
+import { pureSuperTokenFactories } from '@/constants';
 
 const TokenForm = () => {
   const [form, setForm] = useState<{
@@ -20,13 +29,14 @@ const TokenForm = () => {
     description: '',
   });
   const [iconPreview, setIconPreview] = useState<string | null>(null);
-  const [loading, setLoading] = useState(false);
   const [bytecode, setBytecode] = useState('');
+  const chainId = useChainId();
 
   const router = useRouter();
   const { disconnect } = useDisconnect();
-  const { isConnected } = useAccount();
+  const { address, isConnected } = useAccount();
   const { sendTransaction } = useSendTransaction();
+  const { writeContract, isPending } = useWriteContract();
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -53,29 +63,12 @@ const TokenForm = () => {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    setLoading(true);
-    try {
-      const response = await axios.post(
-        process.env.NEXT_PUBLIC_BASE_URL + '/compile-erc20',
-        {
-          name: form.name,
-          symbol: form.symbol,
-        },
-        {
-          headers: {
-            'Content-Type': 'application/json',
-          },
-        },
-      );
-
-      const { bytecode } = response.data;
-      setBytecode(bytecode);
-
-    } catch (error) {
-      console.error('Error compiling ERC20:', error);
-    } finally {
-      setLoading(false);
-    }
+    writeContract({
+      abi: PureSuperTokenDeployerABI,
+      address: pureSuperTokenFactories[chainId] as '0x',
+      functionName: 'deploySuperToken',
+      args: [form.name, form.symbol, address, 1000000000],
+    });
   };
 
   return (
@@ -90,7 +83,7 @@ const TokenForm = () => {
             className="h-[2.5rem] w-full rounded-xl"
             value={form.name}
             onChange={handleChange}
-            disabled={loading}
+            disabled={isPending}
           />
           <Input
             type="text"
@@ -99,7 +92,7 @@ const TokenForm = () => {
             className="h-[2.5rem] w-full rounded-xl"
             value={form.symbol}
             onChange={handleChange}
-            disabled={loading}
+            disabled={isPending}
           />
           <div className="flex w-full justify-start">
             <span>Token Image: &nbsp;</span>
@@ -109,7 +102,7 @@ const TokenForm = () => {
               accept="image/*"
               className="h-[2.5rem]"
               onChange={handleFileChange}
-              disabled={loading}
+              disabled={isPending}
             />
           </div>
           {iconPreview && (
@@ -128,16 +121,23 @@ const TokenForm = () => {
             className="h-[2.5rem] w-full rounded-xl"
             value={form.description}
             onChange={handleChange}
-            disabled={loading}
+            disabled={isPending}
           />
           <HoverBorderGradient
             containerClassName="rounded-full"
             as="button"
             className="flex items-center space-x-2 bg-white text-black dark:bg-black dark:text-white"
           >
-            {loading ? 'Loading...' : 'Submit'}
+            {isPending ? 'Loading...' : 'Submit'}
           </HoverBorderGradient>
         </>
+      )}
+      {isPending && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black bg-opacity-50">
+          <div className="rounded-xl bg-white p-4">
+            <p>Transaction Pending...</p>
+          </div>
+        </div>
       )}
     </form>
   );
