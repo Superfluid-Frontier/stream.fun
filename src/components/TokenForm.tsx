@@ -15,6 +15,7 @@ import {
 import { ConnectKitButton } from 'connectkit';
 import PureSuperTokenDeployerABI from '@/abis/PureSuperTokenDeployer.json';
 import { pureSuperTokenFactories } from '@/constants';
+import { parseEther } from 'viem';
 
 const TokenForm = () => {
   const [form, setForm] = useState<{
@@ -67,7 +68,7 @@ const TokenForm = () => {
       abi: PureSuperTokenDeployerABI,
       address: pureSuperTokenFactories[chainId] as '0x',
       functionName: 'deploySuperToken',
-      args: [form.name, form.symbol, address, 1000000000],
+      args: [form.name, form.symbol, address, parseEther('1000000')],
     });
   };
 
