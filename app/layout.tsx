@@ -2,13 +2,14 @@ import './global.css';
 
 import OnchainProviders from '@/OnchainProviders';
 import GoogleAnalytics from '@/components/GoogleAnalytics/GoogleAnalytics';
-import { ThemeProvider } from "@/components/theme-provider";
+import { ThemeProvider } from '@/components/theme-provider';
 import { cn } from '@/lib/utils';
 import { initAnalytics } from '@/utils/analytics';
+import ConnectWalletButton from '@/components/ConnectWalletButton';
 import type { Metadata } from 'next';
 import { Inter as FontSans } from 'next/font/google';
 import Link from 'next/link';
-import Script from "next/script";
+import Script from 'next/script';
 
 const fontSans = FontSans({
   subsets: ['latin'],
@@ -67,7 +68,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                   </Link>
                 </div>
               </nav>
-              {/* <ConnectKitButton /> */}
+              <ConnectWalletButton />
             </div>
           </header>
           {children}

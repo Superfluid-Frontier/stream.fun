@@ -39,8 +39,6 @@ export const supportedChains = Object.entries(pureSuperTokenFactories)
   .filter(([, address]) => address !== '')
   .map(([id]) => {
     switch (Number(id)) {
-      case mainnet.id:
-        return mainnet;
       case base.id:
         return base;
       case polygon.id:
