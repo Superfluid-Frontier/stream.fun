@@ -53,7 +53,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
       <OnchainProviders>
         <body className={cn('bg-neutral-950 font-sans antialiased', fontSans.variable)}>
           {/* <Navbar /> */}
-          <header className="mt-20 text-white">
+          {/* <header className="mt-20 text-white">
             <div className="container flex items-center justify-between border-b pb-6">
               <nav className="flex items-center justify-center">
                 <div className="space-x-10">
@@ -70,7 +70,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               </nav>
               <ConnectWalletButton />
             </div>
-          </header>
+          </header> */}
           {children}
         </body>
       </OnchainProviders>

@@ -74,7 +74,8 @@ const TokenForm = () => {
 
   return (
     <form onSubmit={handleSubmit} className="relative z-20 flex w-full flex-col items-center gap-4">
-      {!isConnected && <ConnectKitButton />}
+      <ConnectKitButton />
+      
       {isConnected && (
         <>
           <Input
