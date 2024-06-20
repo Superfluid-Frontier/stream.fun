@@ -21,7 +21,6 @@ export function createWagmiConfig(rpcUrl: string, projectId?: string) {
       client({ chain }) {
         return createClient({ chain, transport: http() });
       },
-      connectors: [injected()],
       // Required API Keys
       walletConnectProjectId: process.env.NEXT_PUBLIC_WALLETCONNECT_PROJECT_ID || '',
 

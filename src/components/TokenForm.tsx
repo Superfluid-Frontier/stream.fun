@@ -1,6 +1,6 @@
 'use client';
 import { Input } from '@/components/ui/input';
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import axios from 'axios';
 import { HoverBorderGradient } from './hover-border-gradient';
@@ -11,11 +11,15 @@ import {
   useDisconnect,
   useSendTransaction,
   useWriteContract,
+  useReadContracts,
+  useWaitForTransactionReceipt,
+  useSimulateContract,
 } from 'wagmi';
 import { ConnectKitButton } from 'connectkit';
 import PureSuperTokenDeployerABI from '@/abis/PureSuperTokenDeployer.json';
-import { pureSuperTokenFactories } from '@/constants';
-import { parseEther } from 'viem';
+import WrappedSuperTokenDeployer from '@/abis/WrappedSuperToken.json';
+import { pureSuperTokenFactories, wrappedSuperTokenFactories } from '@/constants';
+import { parseEther, erc20Abi } from 'viem';
 
 const TokenForm = () => {
   const [form, setForm] = useState<{
@@ -31,13 +35,34 @@ const TokenForm = () => {
   });
   const [iconPreview, setIconPreview] = useState<string | null>(null);
   const [bytecode, setBytecode] = useState('');
+  const [hasERC20, setHasERC20] = useState(false);
+  const [erc20Address, setErc20Address] = useState('');
+  const [supertoken, setSupertoken] = useState<string>('');
+  const [transactionStatus, setTransactionStatus] = useState<string>('0');
+  const [tokenLink, setTokenLink] = useState('');
+  const [txLink, setTxLink] = useState('');
   const chainId = useChainId();
 
   const router = useRouter();
   const { disconnect } = useDisconnect();
   const { address, isConnected } = useAccount();
+  const [name, setName] = useState<string | undefined>();
+  const [symbol, setSymbol] = useState<string | undefined>();
   const { sendTransaction } = useSendTransaction();
   const { writeContract, isPending } = useWriteContract();
+  const { writeContract: writeWrappedSuperTokenContract, isPending: isPendingSuperToken } =
+    useWriteContract();
+  const { data: simulateData } = useSimulateContract({
+    address: wrappedSuperTokenFactories[chainId] as `0x`,
+    abi: WrappedSuperTokenDeployer,
+    functionName: 'createERC20Wrapper',
+    args: [erc20Address, 1, form.name, form.symbol],
+  });
+  const { data: dataConfirmed } = useWaitForTransactionReceipt({
+    hash: simulateData?.hash,
+  });
+
+  const isLoading = isPending || isPendingSuperToken;
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -62,75 +87,156 @@ const TokenForm = () => {
     }
   };
 
+  useEffect(() => {
+    if (!dataConfirmed) {
+      return;
+    }
+    const response = dataConfirmed ? dataConfirmed.logs[4]?.topics : [];
+    const beginIndex = 2;
+    const endIndex = 26;
+    if (!response) {
+      return;
+    }
+    const supertokenAddress = response[1];
+    const S = supertokenAddress?.replace(supertokenAddress?.substring(beginIndex, endIndex), '');
+    // const tx = getTransactionLink(chainId!, dataConfirmed?.transactionHash!);
+    // const link = getTokenLink(chainId!, S);
+    setSupertoken(S);
+    // setTokenLink(link);
+    // setTxLink(tx);
+    setTransactionStatus('2');
+  }, [dataConfirmed]);
+
+  const deploySupertoken = async () => {
+    const tx = writeWrappedSuperTokenContract?.(simulateData!.request);
+  };
+  const tokenAddress = erc20Address as `0x`;
+  const result = useReadContracts({
+    allowFailure: false,
+    contracts: [
+      {
+        address: tokenAddress,
+        abi: erc20Abi,
+        functionName: 'decimals',
+      },
+      {
+        address: tokenAddress,
+        abi: erc20Abi,
+        functionName: 'name',
+      },
+      {
+        address: tokenAddress,
+        abi: erc20Abi,
+        functionName: 'symbol',
+      },
+      {
+        address: tokenAddress,
+        abi: erc20Abi,
+        functionName: 'totalSupply',
+      },
+    ],
+  });
+  useEffect(() => {
+    if (!result.data) {
+      return;
+    }
+    setName(`${result.data[1]}`);
+    setSymbol(`${result.data[2]}`);
+  }, [result]);
+
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    writeContract({
-      abi: PureSuperTokenDeployerABI,
-      address: pureSuperTokenFactories[chainId] as '0x',
-      functionName: 'deploySuperToken',
-      args: [form.name, form.symbol, address, parseEther('1000000')],
-    });
+    if (hasERC20) {
+      // Handle existing ERC20 token logic here
+      console.log('ERC20 Address:', erc20Address);
+      deploySupertoken();
+    } else {
+      writeContract({
+        abi: PureSuperTokenDeployerABI,
+        address: pureSuperTokenFactories[chainId] as '0x',
+        functionName: 'deploySuperToken',
+        args: [form.name, form.symbol, address, parseEther('1000000')],
+      });
+    }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative z-20 flex w-full flex-col items-center gap-4 p-6">
+    <form
+      onSubmit={handleSubmit}
+      className="relative z-20 flex w-full flex-col items-center gap-4 p-6"
+    >
       <ConnectKitButton />
-      
+
       {isConnected && (
         <>
-          <Input
-            type="text"
-            name="name"
-            placeholder="Token Name"
-            className="h-[2.5rem] w-full rounded-xl"
-            value={form.name}
-            onChange={handleChange}
-            disabled={isPending}
-          />
-          <Input
-            type="text"
-            name="symbol"
-            placeholder="Token Symbol"
-            className="h-[2.5rem] w-full rounded-xl"
-            value={form.symbol}
-            onChange={handleChange}
-            disabled={isPending}
-          />
-          {/* <div className="flex w-full justify-start">
-            <span>Token Image: &nbsp;</span>
+          <div className="flex items-center gap-2">
             <input
-              type="file"
-              name="icon"
-              accept="image/*"
-              className="h-[2.5rem]"
-              onChange={handleFileChange}
-              disabled={isPending}
+              type="radio"
+              id="hasERC20"
+              name="tokenOption"
+              checked={hasERC20}
+              onChange={() => setHasERC20(true)}
             />
+            <label htmlFor="hasERC20">I already have an ERC20 token</label>
+            <input
+              type="radio"
+              id="createERC20"
+              name="tokenOption"
+              checked={!hasERC20}
+              onChange={() => setHasERC20(false)}
+            />
+            <label htmlFor="createERC20">I want to create a new token</label>
           </div>
-          {iconPreview && (
-            <div className="mt-2 flex w-full justify-center">
-              <img
-                src={iconPreview}
-                alt="Icon Preview"
-                className="h-20 w-20 rounded-full object-cover"
+
+          {hasERC20 ? (
+            <>
+              <Input
+                type="text"
+                name="erc20Address"
+                placeholder="ERC20 Token Address"
+                className="h-[2.5rem] w-full rounded-xl"
+                value={erc20Address}
+                onChange={(e) => setErc20Address(e.target.value)}
+                disabled={isPending}
               />
-            </div>
-          )} */}
-          {/* <Input
-            type="text"
-            name="description"
-            placeholder="Token Description"
-            className="h-[2.5rem] w-full rounded-xl"
-            value={form.description}
-            onChange={handleChange}
-            disabled={isPending}
-          /> */}
+              {result.data ? (
+                <div className="text-green-500">
+                  <p>Token Found: {name} ({symbol})</p>
+                </div>
+              ) : (
+                <div className="text-red-500">
+                  <p>Error: Token not found</p>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              <Input
+                type="text"
+                name="name"
+                placeholder="Token Name"
+                className="h-[2.5rem] w-full rounded-xl"
+                value={form.name}
+                onChange={handleChange}
+                disabled={isPending}
+              />
+              <Input
+                type="text"
+                name="symbol"
+                placeholder="Token Symbol"
+                className="h-[2.5rem] w-full rounded-xl"
+                value={form.symbol}
+                onChange={handleChange}
+                disabled={isPending}
+              />
+            </>
+          )}
           <HoverBorderGradient
             containerClassName="rounded-full"
             as="button"
             className="flex items-center space-x-2 bg-white text-black dark:bg-black dark:text-white"
           >
-            {isPending ? 'Loading...' : 'Submit'}
+            {isPending ? 'Loading...' : hasERC20 ? 'Deploy Wrapped Token' : 'Deploy Pure Super Token'}
           </HoverBorderGradient>
         </>
       )}
