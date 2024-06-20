@@ -17,7 +17,7 @@ export function createWagmiConfig(rpcUrl: string, projectId?: string) {
     getDefaultConfig({
       ssr: true,
       // Your dApps chains
-      chains: [mainnet, polygon, base, baseSepolia],
+      chains: [polygon, base, baseSepolia],
       client({ chain }) {
         return createClient({ chain, transport: http() });
       },

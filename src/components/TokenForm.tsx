@@ -73,7 +73,7 @@ const TokenForm = () => {
   };
 
   return (
-    <form onSubmit={handleSubmit} className="relative z-20 flex w-full flex-col items-center gap-4">
+    <form onSubmit={handleSubmit} className="relative z-20 flex w-full flex-col items-center gap-4 p-6">
       <ConnectKitButton />
       
       {isConnected && (
@@ -96,7 +96,7 @@ const TokenForm = () => {
             onChange={handleChange}
             disabled={isPending}
           />
-          <div className="flex w-full justify-start">
+          {/* <div className="flex w-full justify-start">
             <span>Token Image: &nbsp;</span>
             <input
               type="file"
@@ -115,8 +115,8 @@ const TokenForm = () => {
                 className="h-20 w-20 rounded-full object-cover"
               />
             </div>
-          )}
-          <Input
+          )} */}
+          {/* <Input
             type="text"
             name="description"
             placeholder="Token Description"
@@ -124,7 +124,7 @@ const TokenForm = () => {
             value={form.description}
             onChange={handleChange}
             disabled={isPending}
-          />
+          /> */}
           <HoverBorderGradient
             containerClassName="rounded-full"
             as="button"

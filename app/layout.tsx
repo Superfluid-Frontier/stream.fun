@@ -51,7 +51,8 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         </Script>
       </ThemeProvider>
       <OnchainProviders>
-        <body className={cn('bg-neutral-950 font-sans antialiased', fontSans.variable)}>
+        {/* <body className={cn('bg-neutral-950 font-sans antialiased', fontSans.variable)}> */}
+        <body className={cn('bg-black font-sans antialiased', fontSans.variable)}>
           {/* <Navbar /> */}
           {/* <header className="mt-20 text-white">
             <div className="container flex items-center justify-between border-b pb-6">
