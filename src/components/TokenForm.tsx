@@ -108,7 +108,9 @@ const TokenForm = () => {
   }, [dataConfirmed]);
 
   const deploySupertoken = async () => {
-    const tx = writeWrappedSuperTokenContract?.(simulateData!.request);
+    if (simulateData) {
+      const tx = writeWrappedSuperTokenContract?.(simulateData.request);
+    }
   };
   const tokenAddress = erc20Address as `0x`;
   const result = useReadContracts({
@@ -171,21 +173,16 @@ const TokenForm = () => {
         <>
           <div className="flex items-center gap-2">
             <input
-              type="radio"
+              type="checkbox"
               id="hasERC20"
               name="tokenOption"
               checked={hasERC20}
-              onChange={() => setHasERC20(true)}
+              onChange={() => setHasERC20(!hasERC20)}
+              className="h-4 w-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
             />
-            <label htmlFor="hasERC20">I already have an ERC20 token</label>
-            <input
-              type="radio"
-              id="createERC20"
-              name="tokenOption"
-              checked={!hasERC20}
-              onChange={() => setHasERC20(false)}
-            />
-            <label htmlFor="createERC20">I want to create a new token</label>
+            <label htmlFor="hasERC20" className="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">
+              I already have an ERC20 token
+            </label>
           </div>
 
           {hasERC20 ? (
