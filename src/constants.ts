@@ -21,17 +21,17 @@ export const pureSuperTokenFactories: Record<number, string> = {
   [mainnet.id]: '',
   [base.id]: '0xE9F54484ed713D8B0F7719958908dF1E0fb94Bbb',
   [polygon.id]: '0xf38eaee640622bd12c8fcb4abfa8f610108368e8',
-  [optimism.id]: '',
+  [optimism.id]: '0x0c41010810B195e79C6a144454D58879FA83Ca8e',
   [arbitrum.id]: '0xf159940c48d8937da9455f03a6b2c22d055e13ad',
   [gnosis.id]: '',
-  [avalanche.id]: '',
+  [avalanche.id]: '0xc2b8129c63B7AC9d0B14FD36e39B90Cec81e0CfC',
   [bsc.id]: '',
   [celo.id]: '',
   [degen.id]: '',
   [scroll.id]: '',
   [scrollSepolia.id]: '',
   [avalancheFuji.id]: '',
-  [sepolia.id]: '',
+  [sepolia.id]: '0x4D2071dE2A7e2AA144c1fB64E066Ee6AA38D2b41',
   [optimismSepolia.id]: '',
 };
 
@@ -65,6 +65,10 @@ export const supportedChains = Object.entries(pureSuperTokenFactories)
         return optimism;
       case arbitrum.id:
         return arbitrum;
+      case avalanche.id: 
+        return avalanche;
+      case sepolia.id: 
+        return sepolia;
       default:
         return null;
     }
